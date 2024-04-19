@@ -1,7 +1,20 @@
 from pymongo import MongoClient
 import time
+import argparse
 
-client = MongoClient(host="192.168.1.21", port=27017, username="exporter", password="exporter")
+arg_parser = argparse.ArgumentParser()
+arg_parser.add_argument("--host")
+arg_parser.add_argument("--port")
+arg_parser.add_argument("--username")
+arg_parser.add_argument("--password")
+args = arg_parser.parse_args()
+
+client = MongoClient(
+    host=args.host,
+    port=int(args.port),
+    username=args.username,
+    password=args.password
+)
 admin_db = client.admin
 previous_top = admin_db.command("top")["totals"]
 previous_top.pop('note')
