@@ -42,5 +42,16 @@ merged_df = next_top_df.merge(
     right_index=True,
     suffixes=["_next", "_previous"]
 )
-
+time_lambda = lambda x: x['time']
+count_lambda = lambda x: x['count']
+merged_df['total_time_delta'] = (
+        (
+                merged_df['total_next'].map(time_lambda)
+                - merged_df['total_previous'].map(time_lambda)
+        ) / (
+                merged_df['total_next'].map(count_lambda)
+                - merged_df['total_previous'].map(count_lambda)
+        )
+)
+merged_df.fillna(0, inplace=True)
 print(merged_df.to_string())
