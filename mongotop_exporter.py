@@ -2,7 +2,7 @@ from pymongo import MongoClient
 import time
 import argparse
 import pandas as pd
-from global_functions.df_operations import add_prometheus_output_column, add_metrics_delta
+from global_functions.df_operations import add_all_metrics_prometheus_output, add_metrics_delta
 
 arg_parser = argparse.ArgumentParser()
 arg_parser.add_argument("--host")
@@ -45,6 +45,5 @@ merged_df = next_top_df.merge(
     suffixes=["_next", "_previous"]
 )
 add_metrics_delta(merged_df, metrics)
-
-add_prometheus_output_column(dataframe=merged_df, metric="total")
+add_all_metrics_prometheus_output(merged_df, metrics)
 print(merged_df.to_string())

@@ -4,10 +4,15 @@ time_lambda = lambda x: x['time']
 count_lambda = lambda x: x['count']
 
 
-def add_prometheus_output_column(dataframe, metric):
-    dataframe["prometheus_output"] = (f"mongotop_{metric}"
-                                      + dataframe.index.map(extract_database_and_collection_info)
-                                      + " " + dataframe[f'{metric}_delta'].astype(str))
+def add_all_metrics_prometheus_output(dataframe, metrics):
+    for metric in metrics:
+        add_prometheus_output(dataframe, metric)
+
+
+def add_prometheus_output(dataframe, metric):
+    dataframe[f"prometheus_{metric}_output"] = (f"mongotop_{metric}"
+                                                + dataframe.index.map(extract_database_and_collection_info)
+                                                + " " + dataframe[f'{metric}_delta'].astype(str))
 
 
 def extract_database_and_collection_info(collection_path):
