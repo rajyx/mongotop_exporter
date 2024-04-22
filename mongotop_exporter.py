@@ -2,6 +2,7 @@ from pymongo import MongoClient
 import time
 import argparse
 import pandas as pd
+from global_functions.df_operations import add_prometheus_output_column
 
 arg_parser = argparse.ArgumentParser()
 arg_parser.add_argument("--host")
@@ -54,4 +55,6 @@ merged_df['total_time_delta'] = (
         )
 )
 merged_df.fillna(0, inplace=True)
+
+add_prometheus_output_column(dataframe=merged_df, metric="total_time")
 print(merged_df.to_string())
