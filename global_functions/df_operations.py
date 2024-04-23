@@ -1,5 +1,6 @@
 import re
 from io import StringIO
+import pandas as pd
 
 time_lambda = lambda x: x['time']
 count_lambda = lambda x: x['count']
@@ -54,3 +55,12 @@ def get_metric_prometheus_output(dataframe, metric):
             f"prometheus_{metric}_output"
         ]
     ].to_string(index=False, header=False)
+
+
+def get_top_df(db, metrics):
+    top = db.command("top")["totals"]
+    top.pop('note')
+    return pd.DataFrame.from_dict(
+        top,
+        orient="index"
+    )[metrics]
