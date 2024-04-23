@@ -30,7 +30,7 @@ def extract_database_and_collection_info(collection_path):
 
 def add_metrics_delta(dataframe, metrics):
     for metric in metrics:
-        dataframe[f'{metric}_delta'] = (
+        dataframe[f'{metric}_delta'] = round(
                 (
                         dataframe[f'{metric}_next'].map(time_lambda)
                         - dataframe[f'{metric}_previous'].map(time_lambda)
