@@ -1,8 +1,11 @@
-from mongotop_exporter import MongoTopPrometheusExporter
 import argparse
-from pymongo import MongoClient
-from time import sleep
 
+from flask import Flask, Response
+from pymongo import MongoClient
+
+from mongotop_exporter import MongoTopPrometheusExporter
+
+app = Flask(__name__)
 arg_parser = argparse.ArgumentParser()
 arg_parser.add_argument("--host")
 arg_parser.add_argument("--port")
@@ -22,6 +25,11 @@ top_exporter = MongoTopPrometheusExporter(
     metrics=['total']
 )
 
-for i in range(3):
-    print(top_exporter.get_top_output())
-    sleep(5)
+
+@app.route("/metrics")
+def metrics():
+    return Response(top_exporter.get_top_output(), mimetype="text/plain")
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
