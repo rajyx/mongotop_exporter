@@ -53,4 +53,4 @@ def get_metric_prometheus_output(dataframe, metric):
         [
             f"prometheus_{metric}_output"
         ]
-    ].to_string(index=False)
+    ].to_string(index=False, header=False)
