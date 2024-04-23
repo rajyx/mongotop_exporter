@@ -1,4 +1,5 @@
 import re
+from io import StringIO
 
 time_lambda = lambda x: x['time']
 count_lambda = lambda x: x['count']
@@ -38,3 +39,18 @@ def add_metrics_delta(dataframe, metrics):
                 )
         )
     dataframe.fillna(0, inplace=True)
+
+
+def get_all_metrics_prometheus_output(dataframe, metrics):
+    result = StringIO()
+    for metric in metrics:
+        result.write(get_metric_prometheus_output(dataframe, metric))
+    return result.getvalue()
+
+
+def get_metric_prometheus_output(dataframe, metric):
+    return dataframe[
+        [
+            f"prometheus_{metric}_output"
+        ]
+    ].to_string(index=False)

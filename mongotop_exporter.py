@@ -1,8 +1,14 @@
-from pymongo import MongoClient
-import time
 import argparse
+import time
+
 import pandas as pd
-from global_functions.df_operations import add_all_metrics_prometheus_output, add_metrics_delta
+from pymongo import MongoClient
+
+from global_functions.df_operations import (
+    add_all_metrics_prometheus_output,
+    add_metrics_delta,
+    get_all_metrics_prometheus_output
+)
 
 arg_parser = argparse.ArgumentParser()
 arg_parser.add_argument("--host")
@@ -38,4 +44,5 @@ merged_df = next_top_df.merge(
 )
 add_metrics_delta(merged_df, metrics)
 add_all_metrics_prometheus_output(merged_df, metrics)
-print(merged_df.to_string())
+output = get_all_metrics_prometheus_output(merged_df, metrics)
+print(output)
