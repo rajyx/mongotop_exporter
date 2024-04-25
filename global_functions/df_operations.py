@@ -1,6 +1,7 @@
 import re
 from io import StringIO
 import pandas as pd
+import csv
 
 time_lambda = lambda x: x['time']
 count_lambda = lambda x: x['count']
@@ -31,13 +32,13 @@ def extract_database_and_collection_info(collection_path):
 def add_metrics_delta(dataframe, metrics):
     for metric in metrics:
         dataframe[f'{metric}_delta'] = round(
-                (
-                        dataframe[f'{metric}_next'].map(time_lambda)
-                        - dataframe[f'{metric}_previous'].map(time_lambda)
-                ) / (
-                        dataframe[f'{metric}_next'].map(count_lambda)
-                        - dataframe[f'{metric}_previous'].map(count_lambda)
-                )
+            (
+                    dataframe[f'{metric}_next'].map(time_lambda)
+                    - dataframe[f'{metric}_previous'].map(time_lambda)
+            ) / (
+                    dataframe[f'{metric}_next'].map(count_lambda)
+                    - dataframe[f'{metric}_previous'].map(count_lambda)
+            )
         )
     dataframe.fillna(0, inplace=True)
 
@@ -50,11 +51,20 @@ def get_all_metrics_prometheus_output(dataframe, metrics):
 
 
 def get_metric_prometheus_output(dataframe, metric):
-    return dataframe[
+    output = StringIO()
+    dataframe[
         [
             f"prometheus_{metric}_output"
         ]
-    ].to_string(index=False, header=False)
+    ].to_csv(
+        output,
+        header=False,
+        index=False,
+        quoting=csv.QUOTE_NONE,
+        escapechar='\\',
+        sep=';'  # sep length must be equals or greater then 1
+    )
+    return output.getvalue()
 
 
 def get_top_df(db, metrics):
