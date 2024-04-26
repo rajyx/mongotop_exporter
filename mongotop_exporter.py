@@ -32,5 +32,6 @@ def metrics():
 
 
 if __name__ == '__main__':
-    # Run on 5000 port by default
-    app.run(debug=True)
+    # Run app on 5000 port by default
+    # Expose app to all machines in current network
+    app.run(debug=True, host="0.0.0.0")
