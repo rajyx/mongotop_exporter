@@ -1,3 +1,6 @@
 FROM python:3.9.19
-RUN pip install pandas flask pymongo && useradd -m -s /bin/bash mongotop_exporter
-USER mongotop_exporter
+ARG user=mongotop_exporter
+RUN pip install pandas flask pymongo && useradd -m -s /bin/bash $user
+USER $user
+WORKDIR /home/$user
+COPY . .
