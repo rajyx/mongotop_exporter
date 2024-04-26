@@ -7,15 +7,15 @@ from service import MongoTopPrometheusExporterService
 
 app = Flask(__name__)
 arg_parser = argparse.ArgumentParser()
-arg_parser.add_argument("--host")
-arg_parser.add_argument("--port")
-arg_parser.add_argument("--username")
-arg_parser.add_argument("--password")
+arg_parser.add_argument("--mongo_host", "-mh")
+arg_parser.add_argument("--mongo_port", "-mp")
+arg_parser.add_argument("--username", "-u")
+arg_parser.add_argument("--password", "-p")
 args = arg_parser.parse_args()
 
 client = MongoClient(
-    host=args.host,
-    port=int(args.port),
+    host=args.mongo_host,
+    port=int(args.mongo_port),
     username=args.username,
     password=args.password
 )
@@ -32,4 +32,5 @@ def metrics():
 
 
 if __name__ == '__main__':
+    # Run on 5000 port by default
     app.run(debug=True)
