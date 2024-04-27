@@ -3,8 +3,13 @@ from io import StringIO
 import pandas as pd
 import csv
 
-time_lambda = lambda x: x['time']
-count_lambda = lambda x: x['count']
+
+def time_lambda(x):
+    return x['time']
+
+
+def count_lambda(x):
+    return x['count']
 
 
 def add_all_metrics_prometheus_output(dataframe, metrics):
