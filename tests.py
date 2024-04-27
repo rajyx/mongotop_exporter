@@ -6,7 +6,7 @@ from global_functions.prometheus_output_functions import (
 
 
 class TestPrometheusFunctions(unittest.TestCase):
-    def test_extract_db_and_collection_info(self):
+    def test_extract_db_and_collection_info_returns_correct_db_and_collection(self):
         database = "some_db"
         collection = "very.hard.collection"
         collection_path = '.'.join([database, collection])
@@ -20,4 +20,10 @@ class TestPrometheusFunctions(unittest.TestCase):
         self.assertIsNotNone(collection_info)
         self.assertTrue(
             collection == collection_info.group(1)
+        )
+
+    def test_extract_db_and_collection_info_result_has_braces_and_no_spaces_inside(self):
+        prometheus_info = extract_db_and_collection_info("db.collection")
+        self.assertIsNotNone(
+            re.search('{[a-zA-Z0-9\._,"=]+}', prometheus_info)
         )
