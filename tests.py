@@ -1,11 +1,21 @@
+import random
 import re
 import unittest
 from global_functions.prometheus_output_functions import (
     extract_db_and_collection_info
 )
+from global_vars import metrics
+import pandas as pd
 
 
 class TestPrometheusFunctions(unittest.TestCase):
+    def setUp(self):
+        df_dict = {}
+        for metric in metrics:
+            for element in ["time", "count"]:
+                df_dict[f"{metric}.{element}"] = random.randint(0, 100)
+        self.dataframe = pd.DataFrame(data=df_dict, index=["db.collection"])
+
     def test_extract_db_and_collection_info_returns_correct_db_and_collection(self):
         database = "some_db"
         collection = "very.hard.collection"
@@ -27,3 +37,6 @@ class TestPrometheusFunctions(unittest.TestCase):
         self.assertIsNotNone(
             re.search('{[a-zA-Z0-9\._,"=]+}', prometheus_info)
         )
+
+    def test_prometheus_output_has_metric_info_value_parts(self):
+        pass
