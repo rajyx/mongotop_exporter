@@ -1,15 +1,6 @@
 import re
 from io import StringIO
-import pandas as pd
 import csv
-
-
-def time_lambda(x):
-    return x['time']
-
-
-def count_lambda(x):
-    return x['count']
 
 
 def add_all_metrics_prometheus_output(dataframe, metrics):
@@ -34,20 +25,6 @@ def extract_database_and_collection_info(collection_path):
     return "{" + info + "}"
 
 
-def add_metrics_delta(dataframe, metrics):
-    for metric in metrics:
-        dataframe[f'{metric}_delta'] = round(
-            (
-                    dataframe[f'{metric}_next'].map(time_lambda)
-                    - dataframe[f'{metric}_previous'].map(time_lambda)
-            ) / (
-                    dataframe[f'{metric}_next'].map(count_lambda)
-                    - dataframe[f'{metric}_previous'].map(count_lambda)
-            )
-        )
-    dataframe.fillna(0, inplace=True)
-
-
 def get_all_metrics_prometheus_output(dataframe, metrics):
     result = StringIO()
     for metric in metrics:
@@ -70,12 +47,3 @@ def get_metric_prometheus_output(dataframe, metric):
         sep=';'  # sep length must be equals or greater then 1
     )
     return output.getvalue()
-
-
-def get_top_df(db, metrics):
-    top = db.command("top")["totals"]
-    top.pop('note')
-    return pd.DataFrame.from_dict(
-        top,
-        orient="index"
-    )[metrics]
