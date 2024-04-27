@@ -10,11 +10,11 @@ def add_all_metrics_prometheus_output(dataframe, metrics):
 
 def add_prometheus_output(dataframe, metric):
     dataframe[f"prometheus_{metric}_output"] = (f"mongotop_{metric}"
-                                                + dataframe.index.map(extract_database_and_collection_info)
+                                                + dataframe.index.map(extract_db_and_collection_info)
                                                 + " " + dataframe[f'{metric}_delta'].astype(str))
 
 
-def extract_database_and_collection_info(collection_path):
+def extract_db_and_collection_info(collection_path):
     match = re.search('^(\w+)\.(.*)', collection_path)
     info = ",".join(
         [
