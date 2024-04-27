@@ -16,7 +16,7 @@ class TestPrometheusFunctions(unittest.TestCase):
         self.assertTrue(
             database == db_info.group(1)
         )
-        collection_info = re.search('collection="([a-zA-Z0-9\.]+)"', prometheus_info)
+        collection_info = re.search('collection="([a-zA-Z0-9\._]+)"', prometheus_info)
         self.assertIsNotNone(collection_info)
         self.assertTrue(
             collection == collection_info.group(1)
