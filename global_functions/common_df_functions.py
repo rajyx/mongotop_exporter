@@ -21,7 +21,7 @@ def add_metrics_delta(dataframe, metrics):
                     dataframe[f'{metric}_next'].map(count_lambda)
                     - dataframe[f'{metric}_previous'].map(count_lambda)
             )
-        )
+        ).astype(int)
     dataframe.fillna(0, inplace=True)
 
 
