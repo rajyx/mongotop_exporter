@@ -12,13 +12,14 @@ import pandas as pd
 
 class TestPrometheusFunctions(unittest.TestCase):
     def setUp(self):
+        self.collection_path = "db.collection"
         df_dict = {
-            "db.collection": {}
+            self.collection_path: {}
         }
         for metric in metrics:
             metric_time = random.randint(0, 100)
             metric_count = random.randint(0, 100)
-            df_dict["db.collection"].update(
+            df_dict[self.collection_path].update(
                 {
                     f"{metric}_previous": {
                         "time": metric_time,
@@ -69,3 +70,17 @@ class TestPrometheusFunctions(unittest.TestCase):
                 merged_df.columns
             )
         )
+
+    def test_add_prometheus_output_returns_delta_from_metric_delta_column(self):
+        merged_df = self.merged_top
+        add_metrics_delta(merged_df, metrics)
+        for metric in metrics:
+            add_prometheus_output_column(merged_df, metric)
+
+        for metric in metrics:
+            delta = merged_df.loc[self.collection_path][f"{metric}_delta"]
+            output_delta = re.search(
+                "(\d+)$",
+                merged_df.loc[self.collection_path][f"prometheus_{metric}_output"]
+            ).group(1)
+            self.assertEquals(delta, int(output_delta))
