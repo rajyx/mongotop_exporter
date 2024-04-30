@@ -4,6 +4,7 @@ import unittest
 from global_functions.prometheus_output_functions import (
     extract_db_and_collection_info
 )
+from global_functions.common_df_functions import add_metrics_delta
 from global_vars import metrics
 import pandas as pd
 
@@ -11,6 +12,30 @@ import pandas as pd
 class TestPrometheusFunctions(unittest.TestCase):
     def setUp(self):
         df_dict = {
+            "db.collection": {}
+        }
+        for metric in metrics:
+            metric_time = random.randint(0, 100)
+            metric_count = random.randint(0, 100)
+            df_dict["db.collection"].update(
+                {
+                    f"{metric}_previous": {
+                        "time": metric_time,
+                        "count": metric_count
+                    },
+                    f"{metric}_next": {
+                        "time": metric_time + random.randint(0, 100) * 10000,
+                        "count": metric_count + random.randint(0, 100)
+                    }
+                }
+            )
+        self.merged_top = pd.DataFrame.from_dict(
+            df_dict,
+            orient="index"
+        )
+
+    def __prepare_random_stat(self):
+        return {
             "db.collection": {
                 metric: {
                     "time": random.randint(0, 100),
@@ -18,10 +43,6 @@ class TestPrometheusFunctions(unittest.TestCase):
                 } for metric in metrics
             }
         }
-        self.dataframe = pd.DataFrame.from_dict(
-            df_dict,
-            orient="index"
-        )
 
     def test_extract_db_and_collection_info_returns_correct_db_and_collection(self):
         database = "some_db"
@@ -45,5 +66,8 @@ class TestPrometheusFunctions(unittest.TestCase):
             re.search('{[a-zA-Z0-9\._,"=]+}', prometheus_info)
         )
 
-    def test_prometheus_output_has_metric_info_value_parts(self):
+    def test_prometheus_output_has_metric_info_and_value_parts(self):
+        merged_df = self.merged_top
+        add_metrics_delta(merged_df, metrics)
+        print(merged_df.to_string())
         pass
