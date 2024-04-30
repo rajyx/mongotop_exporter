@@ -10,11 +10,18 @@ import pandas as pd
 
 class TestPrometheusFunctions(unittest.TestCase):
     def setUp(self):
-        df_dict = {}
-        for metric in metrics:
-            for element in ["time", "count"]:
-                df_dict[f"{metric}.{element}"] = random.randint(0, 100)
-        self.dataframe = pd.DataFrame(data=df_dict, index=["db.collection"])
+        df_dict = {
+            "db.collection": {
+                metric: {
+                    "time": random.randint(0, 100),
+                    "count": random.randint(0, 100)
+                } for metric in metrics
+            }
+        }
+        self.dataframe = pd.DataFrame.from_dict(
+            df_dict,
+            orient="index"
+        )
 
     def test_extract_db_and_collection_info_returns_correct_db_and_collection(self):
         database = "some_db"
