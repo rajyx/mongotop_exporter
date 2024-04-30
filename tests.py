@@ -35,16 +35,6 @@ class TestPrometheusFunctions(unittest.TestCase):
             orient="index"
         )
 
-    def __prepare_random_stat(self):
-        return {
-            "db.collection": {
-                metric: {
-                    "time": random.randint(0, 100),
-                    "count": random.randint(0, 100)
-                } for metric in metrics
-            }
-        }
-
     def test_extract_db_and_collection_info_returns_correct_db_and_collection(self):
         database = "some_db"
         collection = "very.hard.collection"
