@@ -5,10 +5,10 @@ import csv
 
 def add_all_metrics_prometheus_output(dataframe, metrics):
     for metric in metrics:
-        add_prometheus_output(dataframe, metric)
+        add_prometheus_output_column(dataframe, metric)
 
 
-def add_prometheus_output(dataframe, metric):
+def add_prometheus_output_column(dataframe, metric):
     dataframe[f"prometheus_{metric}_output"] = (f"mongotop_{metric}"
                                                 + dataframe.index.map(extract_db_and_collection_info)
                                                 + " " + dataframe[f'{metric}_delta'].astype(str))
