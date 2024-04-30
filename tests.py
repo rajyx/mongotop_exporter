@@ -2,7 +2,8 @@ import random
 import re
 import unittest
 from global_functions.prometheus_output_functions import (
-    extract_db_and_collection_info
+    extract_db_and_collection_info,
+    add_prometheus_output_column
 )
 from global_functions.common_df_functions import add_metrics_delta
 from global_vars import metrics
@@ -66,8 +67,15 @@ class TestPrometheusFunctions(unittest.TestCase):
             re.search('{[a-zA-Z0-9\._,"=]+}', prometheus_info)
         )
 
-    def test_prometheus_output_has_metric_info_and_value_parts(self):
+    def test_add_prometheus_output_column_creates_column_metric(self):
         merged_df = self.merged_top
         add_metrics_delta(merged_df, metrics)
-        print(merged_df.to_string())
-        pass
+        for metric in metrics:
+            add_prometheus_output_column(merged_df, metric)
+        self.assertTrue(
+            set(
+                [f"prometheus_{metric}_output" for metric in metrics]
+            ).issubset(
+                merged_df.columns
+            )
+        )
