@@ -11,7 +11,7 @@ def add_all_metrics_prometheus_output(dataframe, metrics):
 def add_prometheus_output_column(dataframe, metric):
     dataframe[f"prometheus_{metric}_output"] = (f"mongotop_{metric}"
                                                 + dataframe.index.map(extract_db_and_collection_info)
-                                                + " " + dataframe[f'{metric}_delta'].astype(str))
+                                                + " " + dataframe[f'{metric}_delta'].map(lambda x: str(int(x))))
 
 
 def extract_db_and_collection_info(collection_path):
