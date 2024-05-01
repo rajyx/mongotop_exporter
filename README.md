@@ -1,6 +1,6 @@
 Mongotop exporter
 ===================================
-Simple exporter of average query times from mongodb top
+Simple exporter of average metric times from mongodb top
 
 Common usage ways
 ---------------
