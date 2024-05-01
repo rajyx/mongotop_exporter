@@ -4,7 +4,8 @@ import unittest
 from global_functions.prometheus_output_functions import (
     extract_db_and_collection_info,
     add_prometheus_output_column,
-    add_all_metrics_prometheus_output
+    add_all_metrics_prometheus_output,
+    get_metric_prometheus_output
 )
 from global_functions.common_df_functions import add_metrics_delta
 from global_vars import metrics
@@ -62,7 +63,7 @@ class TestPrometheusFunctions(unittest.TestCase):
 
     def test_add_prometheus_output_column_creates_column_metric(self):
         merged_df = self.merged_top
-        metric = metrics[random.randint(0, len(metrics))]
+        metric = metrics[random.randint(0, len(metrics) - 1)]
         add_prometheus_output_column(merged_df, metric)
         self.assertTrue(
             f"prometheus_{metric}_output" in merged_df.columns
@@ -87,5 +88,17 @@ class TestPrometheusFunctions(unittest.TestCase):
                 [f"prometheus_{metric}_output" for metric in metrics]
             ).issubset(
                 merged_df.columns
+            )
+        )
+
+    def test_get_metric_prometheus_output_has_metric_name_and_delta_value(self):
+        merged_df = self.merged_top
+        metric = metrics[random.randint(0, len(metrics) - 1)]
+        add_prometheus_output_column(merged_df, metric)
+        output = get_metric_prometheus_output(merged_df, metric)
+        self.assertIsNotNone(
+            re.search(
+                "mongotop_(\w+){.*} ([0-9\.]+)",
+                output
             )
         )
