@@ -34,10 +34,8 @@ Usage examples
   ```
   And then, run container with exporter
   ```
-  docker run -d -p <host>:<host_port>:<container_port> <image>:<tag> -mh <mongo_host> -mp <mongo_port> -u <user> -p <pwd>
+  docker run -d -p <host_port>:<container_port> --name <container_name> <image>:<tag> -mh <mongo_host> -mp <mongo_port> -u <user> -p <pwd>
   ```
-  Host in -p option may be empty or 0.0.0.0,  
-  if you want exporter to listen any machine from current network
 
 
 Metrics url
