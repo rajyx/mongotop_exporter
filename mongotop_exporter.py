@@ -2,13 +2,13 @@ import argparse
 
 from flask import Flask, Response
 from pymongo import MongoClient
-
+from global_vars import metrics
 from service import MongoTopPrometheusExporterService
 
 app = Flask(__name__)
 arg_parser = argparse.ArgumentParser()
 arg_parser.add_argument("--mongo_host", "-mh")
-arg_parser.add_argument("--mongo_port", "-mp")
+arg_parser.add_argument("--mongo_port", "-mp", default="27017")
 arg_parser.add_argument("--username", "-u")
 arg_parser.add_argument("--password", "-p")
 args = arg_parser.parse_args()
@@ -22,7 +22,7 @@ client = MongoClient(
 
 top_exporter = MongoTopPrometheusExporterService(
     db=client.admin,
-    metrics=['total']
+    metrics=metrics
 )
 
 

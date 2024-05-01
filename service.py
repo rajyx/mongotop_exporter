@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
-from global_functions.df_operations import (
+from global_functions.common_df_functions import (
     get_top_df,
-    add_metrics_delta,
+    add_metrics_delta
+)
+from global_functions.prometheus_output_functions import (
     add_all_metrics_prometheus_output,
     get_all_metrics_prometheus_output
 )
