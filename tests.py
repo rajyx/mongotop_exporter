@@ -35,6 +35,7 @@ class TestPrometheusFunctions(unittest.TestCase):
             df_dict,
             orient="index"
         )
+        add_metrics_delta(self.merged_top, metrics)
 
     def test_extract_db_and_collection_info_returns_correct_db_and_collection(self):
         database = "some_db"
@@ -60,7 +61,6 @@ class TestPrometheusFunctions(unittest.TestCase):
 
     def test_add_prometheus_output_column_creates_column_metric(self):
         merged_df = self.merged_top
-        add_metrics_delta(merged_df, metrics)
         metric = metrics[random.randint(0, len(metrics))]
         add_prometheus_output_column(merged_df, metric)
         self.assertTrue(
@@ -69,12 +69,14 @@ class TestPrometheusFunctions(unittest.TestCase):
 
     def test_add_prometheus_output_returns_delta_from_metric_delta_column(self):
         merged_df = self.merged_top
-        add_metrics_delta(merged_df, metrics)
-        metric = metrics[random.randint(0, len(metrics))]
+        metric = metrics[random.randint(0, len(metrics) - 1)]
         add_prometheus_output_column(merged_df, metric)
         delta = merged_df.loc[self.collection_path][f"{metric}_delta"]
         output_delta = re.search(
-            "(\d+)$",
+            " ([\d\.]+)$",
             merged_df.loc[self.collection_path][f"prometheus_{metric}_output"]
         ).group(1)
-        self.assertEquals(delta, int(output_delta))
+        self.assertEquals(delta, float(output_delta))
+
+    def test_add_all_metrics_prometheus_output_creates_column_for_each_metric(self):
+        pass
