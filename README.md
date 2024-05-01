@@ -2,7 +2,22 @@ Mongotop exporter
 ===================================
 Simple exporter of average metric times from mongodb top
 
-Common usage ways
+Permissions
+---------------
+Mongodb user should have following rights:
+```
+      {
+         "role":"clusterMonitor",
+         "db":"admin"
+      },
+      {
+         "role":"read",
+         "db":"local"
+      }
+```
+
+
+Usage examples
 ---------------
 
 - Using python files directly:
