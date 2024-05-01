@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 
 def time_lambda(x):
@@ -24,7 +25,7 @@ def add_metric_delta(dataframe, metric):
                 - dataframe[f'{metric}_previous'].map(count_lambda)
         )
     )
-    dataframe.fillna(0, inplace=True)
+    dataframe.replace([np.inf, -np.inf, np.nan], 0, inplace=True)
 
 
 def get_top_df(db, metrics):

@@ -1,12 +1,12 @@
 import random
 import unittest
 
-from test_utils.setup import prepare_merged_df
 from common.df_functions import (
     add_metric_delta,
     add_metrics_delta
 )
 from common.global_vars import metrics
+from test_utils.setup import prepare_merged_df
 
 
 class TestCommonDFFunctions(unittest.TestCase):
