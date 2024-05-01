@@ -16,7 +16,6 @@ Mongodb user should have the following rights:
       }
 ```
 
-
 Usage examples
 ---------------
 
@@ -39,3 +38,8 @@ Usage examples
   ```
   Host in -p option may be empty or 0.0.0.0,  
   if you want exporter to listen any machine from current network
+
+
+Metrics url
+---------------
+Mongotop exporter publishes metrics by /metrics endpoint
