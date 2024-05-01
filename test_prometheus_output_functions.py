@@ -1,45 +1,26 @@
 import random
 import re
 import unittest
-from global_functions.prometheus_output_functions import (
+from io import StringIO
+
+from common.prometheus_output_functions import (
     extract_db_and_collection_info,
     add_prometheus_output_column,
     add_all_metrics_prometheus_output,
     get_metric_prometheus_output,
     get_all_metrics_prometheus_output
 )
-from global_functions.common_df_functions import add_metrics_delta
-from global_vars import metrics
-import pandas as pd
-from io import StringIO
+from common.df_functions import add_metrics_delta
+from common.global_vars import metrics
+from test_utils.setup import prepare_merged_df
 
 
 class TestPrometheusFunctions(unittest.TestCase):
     def setUp(self):
         self.collection_path = "db.collection"
-        df_dict = {
-            self.collection_path: {}
-        }
-        for metric in metrics:
-            metric_time = random.randint(0, 100)
-            metric_count = random.randint(0, 100)
-            df_dict[self.collection_path].update(
-                {
-                    f"{metric}_previous": {
-                        "time": metric_time,
-                        "count": metric_count
-                    },
-                    f"{metric}_next": {
-                        "time": metric_time + random.randint(0, 100) * 10000,
-                        "count": metric_count + random.randint(0, 100)
-                    }
-                }
-            )
-        self.merged_top = pd.DataFrame.from_dict(
-            df_dict,
-            orient="index"
-        )
-        add_metrics_delta(self.merged_top, metrics)
+        merged_top = prepare_merged_df(self.collection_path)
+        add_metrics_delta(merged_top, metrics)
+        self.merged_top = merged_top
 
     def test_extract_db_and_collection_info_returns_correct_db_and_collection(self):
         database = "some_db"
@@ -60,7 +41,7 @@ class TestPrometheusFunctions(unittest.TestCase):
     def test_extract_db_and_collection_info_result_has_braces_and_no_spaces_inside(self):
         prometheus_info = extract_db_and_collection_info("db.collection")
         self.assertIsNotNone(
-            re.search('{[a-zA-Z0-9\._,"=]+}', prometheus_info)
+            re.search(r'\{[a-zA-Z0-9\._,"=]+\}', prometheus_info)
         )
 
     def test_add_prometheus_output_column_creates_column_metric(self):
@@ -75,12 +56,26 @@ class TestPrometheusFunctions(unittest.TestCase):
         merged_df = self.merged_top
         metric = metrics[random.randint(0, len(metrics) - 1)]
         add_prometheus_output_column(merged_df, metric)
-        delta = merged_df.loc[self.collection_path][f"{metric}_delta"]
-        output_delta = re.search(
-            " ([\d\.]+)$",
+        collection_row = merged_df.loc[self.collection_path]
+        delta = float(collection_row[f"{metric}_delta"])
+        output_delta = float(
+            re.search(
+                " (\d+)$",
+                collection_row[f"prometheus_{metric}_output"]
+            ).group(1)
+        )
+        self.assertTrue(delta == output_delta)
+
+    def test_add_prometheus_output_returns_int_delta(self):
+        merged_df = self.merged_top
+        metric = metrics[random.randint(0, len(metrics) - 1)]
+        add_prometheus_output_column(merged_df, metric)
+        matcher = re.search(
+            " (\d+)$",
             merged_df.loc[self.collection_path][f"prometheus_{metric}_output"]
-        ).group(1)
-        self.assertEquals(delta, float(output_delta))
+        )
+        self.assertIsNotNone(matcher)
+        self.assertIsNotNone(matcher.group(1))
 
     def test_add_all_metrics_prometheus_output_creates_column_for_each_metric(self):
         merged_df = self.merged_top
@@ -100,7 +95,7 @@ class TestPrometheusFunctions(unittest.TestCase):
         output = get_metric_prometheus_output(merged_df, metric)
         self.assertIsNotNone(
             re.search(
-                "mongotop_(\w+){.*} ([0-9\.]+)",
+                r"mongotop_(\w+)\{.*\} (\d+)",
                 output
             )
         )
@@ -111,7 +106,7 @@ class TestPrometheusFunctions(unittest.TestCase):
         output = get_all_metrics_prometheus_output(merged_df, metrics)
         extracted_metric_names = [
             re.search(
-                "mongotop_(\w+){.*} ([0-9\.]+)",
+                r"mongotop_(\w+)\{.*\} (\d+)",
                 metric_row
             ).group(1) for metric_row in StringIO(output).readlines()
         ]

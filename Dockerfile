@@ -4,7 +4,8 @@ RUN pip install pandas flask pymongo \
     && useradd -m -s /bin/bash $user
 USER $user
 WORKDIR /home/$user
-COPY . .
+COPY --chown=$user . .
 RUN python3 -m unittest \
-    && rm test_*.py
+    && rm test_*.py \
+    && rm -r test_utils
 ENTRYPOINT ["python3", "mongotop_exporter.py"]

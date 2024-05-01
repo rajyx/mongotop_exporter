@@ -2,7 +2,7 @@ import argparse
 
 from flask import Flask, Response
 from pymongo import MongoClient
-from global_vars import metrics
+from common.global_vars import metrics
 from service import MongoTopPrometheusExporterService
 
 app = Flask(__name__)
@@ -33,4 +33,5 @@ def metrics():
 
 if __name__ == '__main__':
     # Run app on 5000 port by default
-    app.run(debug=True)
+    # Expose app to any machine of current network
+    app.run(debug=True, host="0.0.0.0")
