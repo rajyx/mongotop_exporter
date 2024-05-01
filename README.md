@@ -6,14 +6,14 @@ Permissions
 ---------------
 Mongodb user should have the following rights:
 ```
-      {
-         "role":"clusterMonitor",
-         "db":"admin"
-      },
-      {
-         "role":"read",
-         "db":"local"
-      }
+  {
+     "role":"clusterMonitor",
+     "db":"admin"
+  },
+  {
+     "role":"read",
+     "db":"local"
+  }
 ```
 
 Usage examples
