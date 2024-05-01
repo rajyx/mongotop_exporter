@@ -76,7 +76,6 @@ class TestPrometheusFunctions(unittest.TestCase):
         add_metrics_delta(merged_df, metrics)
         for metric in metrics:
             add_prometheus_output_column(merged_df, metric)
-
         for metric in metrics:
             delta = merged_df.loc[self.collection_path][f"{metric}_delta"]
             output_delta = re.search(
