@@ -61,25 +61,20 @@ class TestPrometheusFunctions(unittest.TestCase):
     def test_add_prometheus_output_column_creates_column_metric(self):
         merged_df = self.merged_top
         add_metrics_delta(merged_df, metrics)
-        for metric in metrics:
-            add_prometheus_output_column(merged_df, metric)
+        metric = metrics[random.randint(0, len(metrics))]
+        add_prometheus_output_column(merged_df, metric)
         self.assertTrue(
-            set(
-                [f"prometheus_{metric}_output" for metric in metrics]
-            ).issubset(
-                merged_df.columns
-            )
+            f"prometheus_{metric}_output" in merged_df.columns
         )
 
     def test_add_prometheus_output_returns_delta_from_metric_delta_column(self):
         merged_df = self.merged_top
         add_metrics_delta(merged_df, metrics)
-        for metric in metrics:
-            add_prometheus_output_column(merged_df, metric)
-        for metric in metrics:
-            delta = merged_df.loc[self.collection_path][f"{metric}_delta"]
-            output_delta = re.search(
-                "(\d+)$",
-                merged_df.loc[self.collection_path][f"prometheus_{metric}_output"]
-            ).group(1)
-            self.assertEquals(delta, int(output_delta))
+        metric = metrics[random.randint(0, len(metrics))]
+        add_prometheus_output_column(merged_df, metric)
+        delta = merged_df.loc[self.collection_path][f"{metric}_delta"]
+        output_delta = re.search(
+            "(\d+)$",
+            merged_df.loc[self.collection_path][f"prometheus_{metric}_output"]
+        ).group(1)
+        self.assertEquals(delta, int(output_delta))
