@@ -3,7 +3,8 @@ import re
 import unittest
 from global_functions.prometheus_output_functions import (
     extract_db_and_collection_info,
-    add_prometheus_output_column
+    add_prometheus_output_column,
+    add_all_metrics_prometheus_output
 )
 from global_functions.common_df_functions import add_metrics_delta
 from global_vars import metrics
@@ -79,4 +80,13 @@ class TestPrometheusFunctions(unittest.TestCase):
         self.assertEquals(delta, float(output_delta))
 
     def test_add_all_metrics_prometheus_output_creates_column_for_each_metric(self):
+        merged_df = self.merged_top
+        add_all_metrics_prometheus_output(merged_df, metrics)
+        self.assertTrue(
+            set(
+                [f"prometheus_{metric}_output" for metric in metrics]
+            ).issubset(
+                merged_df.columns
+            )
+        )
         pass
