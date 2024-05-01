@@ -12,7 +12,6 @@ def count_lambda(x):
 def add_metrics_delta(dataframe, metrics):
     for metric in metrics:
         add_metric_delta(dataframe, metric)
-    dataframe.fillna(0, inplace=True)
 
 
 def add_metric_delta(dataframe, metric):
@@ -25,6 +24,7 @@ def add_metric_delta(dataframe, metric):
                 - dataframe[f'{metric}_previous'].map(count_lambda)
         )
     )
+    dataframe.fillna(0, inplace=True)
 
 
 def get_top_df(db, metrics):
