@@ -60,7 +60,7 @@ class TestPrometheusFunctions(unittest.TestCase):
     def test_extract_db_and_collection_info_result_has_braces_and_no_spaces_inside(self):
         prometheus_info = extract_db_and_collection_info("db.collection")
         self.assertIsNotNone(
-            re.search('{[a-zA-Z0-9\._,"=]+}', prometheus_info)
+            re.search(r'\{[a-zA-Z0-9\._,"=]+\}', prometheus_info)
         )
 
     def test_add_prometheus_output_column_creates_column_metric(self):
@@ -100,7 +100,7 @@ class TestPrometheusFunctions(unittest.TestCase):
         output = get_metric_prometheus_output(merged_df, metric)
         self.assertIsNotNone(
             re.search(
-                "mongotop_(\w+){.*} ([0-9\.]+)",
+                r"mongotop_(\w+)\{.*\} ([0-9\.]+)",
                 output
             )
         )
@@ -111,7 +111,7 @@ class TestPrometheusFunctions(unittest.TestCase):
         output = get_all_metrics_prometheus_output(merged_df, metrics)
         extracted_metric_names = [
             re.search(
-                "mongotop_(\w+){.*} ([0-9\.]+)",
+                r"mongotop_(\w+)\{.*\} ([0-9\.]+)",
                 metric_row
             ).group(1) for metric_row in StringIO(output).readlines()
         ]
