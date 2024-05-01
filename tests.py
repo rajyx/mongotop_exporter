@@ -5,11 +5,13 @@ from global_functions.prometheus_output_functions import (
     extract_db_and_collection_info,
     add_prometheus_output_column,
     add_all_metrics_prometheus_output,
-    get_metric_prometheus_output
+    get_metric_prometheus_output,
+    get_all_metrics_prometheus_output
 )
 from global_functions.common_df_functions import add_metrics_delta
 from global_vars import metrics
 import pandas as pd
+from io import StringIO
 
 
 class TestPrometheusFunctions(unittest.TestCase):
@@ -101,4 +103,18 @@ class TestPrometheusFunctions(unittest.TestCase):
                 "mongotop_(\w+){.*} ([0-9\.]+)",
                 output
             )
+        )
+
+    def test_get_all_metrics_prometheus_output_return_output_for_each_metric(self):
+        merged_df = self.merged_top
+        add_all_metrics_prometheus_output(merged_df, metrics)
+        output = get_all_metrics_prometheus_output(merged_df, metrics)
+        extracted_metric_names = [
+            re.search(
+                "mongotop_(\w+){.*} ([0-9\.]+)",
+                metric_row
+            ).group(1) for metric_row in StringIO(output).readlines()
+        ]
+        self.assertTrue(
+            set(metrics).issubset(set(extracted_metric_names))
         )
