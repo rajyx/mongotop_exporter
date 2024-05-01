@@ -1,7 +1,7 @@
-from global_vars import metrics
+from common.global_vars import metrics
 import random
 import pandas as pd
-from global_functions.common_df_functions import add_metrics_delta
+from common.df_functions import add_metrics_delta
 
 
 def prepare_merged_df(collection_path):

@@ -2,7 +2,7 @@ import argparse
 
 from flask import Flask, Response
 from pymongo import MongoClient
-from global_vars import metrics
+from common.global_vars import metrics
 from service import MongoTopPrometheusExporterService
 
 app = Flask(__name__)

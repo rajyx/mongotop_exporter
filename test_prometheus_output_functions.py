@@ -3,14 +3,14 @@ import re
 import unittest
 from io import StringIO
 
-from global_functions.prometheus_output_functions import (
+from common.prometheus_output_functions import (
     extract_db_and_collection_info,
     add_prometheus_output_column,
     add_all_metrics_prometheus_output,
     get_metric_prometheus_output,
     get_all_metrics_prometheus_output
 )
-from global_vars import metrics
+from common.global_vars import metrics
 from test_utils.setup import prepare_merged_df
 
 
