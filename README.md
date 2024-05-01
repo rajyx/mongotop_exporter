@@ -2,7 +2,7 @@ Mongotop exporter
 ===================================
 Simple exporter of average query times from mongodb top
 
-Usage
+Common usage ways
 ---------------
 
 - Using python files directly:
