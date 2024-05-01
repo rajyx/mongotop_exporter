@@ -6,5 +6,6 @@ USER $user
 WORKDIR /home/$user
 COPY . .
 RUN python3 -m unittest \
-    && rm test_*.py
+    && rm test_*.py \
+    && rm -r test_utils
 ENTRYPOINT ["python3", "mongotop_exporter.py"]

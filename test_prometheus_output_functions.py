@@ -1,6 +1,8 @@
 import random
 import re
 import unittest
+from io import StringIO
+
 from global_functions.prometheus_output_functions import (
     extract_db_and_collection_info,
     add_prometheus_output_column,
@@ -8,38 +10,14 @@ from global_functions.prometheus_output_functions import (
     get_metric_prometheus_output,
     get_all_metrics_prometheus_output
 )
-from global_functions.common_df_functions import add_metrics_delta
 from global_vars import metrics
-import pandas as pd
-from io import StringIO
+from test_utils.setup import prepare_merged_df
 
 
 class TestPrometheusFunctions(unittest.TestCase):
     def setUp(self):
         self.collection_path = "db.collection"
-        df_dict = {
-            self.collection_path: {}
-        }
-        for metric in metrics:
-            metric_time = random.randint(0, 100)
-            metric_count = random.randint(0, 100)
-            df_dict[self.collection_path].update(
-                {
-                    f"{metric}_previous": {
-                        "time": metric_time,
-                        "count": metric_count
-                    },
-                    f"{metric}_next": {
-                        "time": metric_time + random.randint(0, 100) * 10000,
-                        "count": metric_count + random.randint(0, 100)
-                    }
-                }
-            )
-        self.merged_top = pd.DataFrame.from_dict(
-            df_dict,
-            orient="index"
-        )
-        add_metrics_delta(self.merged_top, metrics)
+        self.merged_top = prepare_merged_df(self.collection_path)
 
     def test_extract_db_and_collection_info_returns_correct_db_and_collection(self):
         database = "some_db"
