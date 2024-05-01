@@ -4,7 +4,7 @@ Simple exporter of average metric times from mongodb top
 
 Permissions
 ---------------
-Mongodb user should have following rights:
+Mongodb user should have the following rights:
 ```
       {
          "role":"clusterMonitor",
