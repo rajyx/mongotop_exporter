@@ -89,4 +89,3 @@ class TestPrometheusFunctions(unittest.TestCase):
                 merged_df.columns
             )
         )
-        pass
