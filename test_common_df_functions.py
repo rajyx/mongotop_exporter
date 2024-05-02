@@ -40,8 +40,9 @@ class TestCommonDFFunctions(unittest.TestCase):
         self.assertTrue(
             f"{metric}_delta" in df.columns
         )
+        count_delta = next_metric_value["count"] - prev_metric_value["count"]
         expected_delta = round(
             (next_metric_value["time"] - prev_metric_value["time"]) /
-            (next_metric_value["count"] - prev_metric_value["count"])
+            (1 if count_delta == 0 else count_delta)
         )
         self.assertTrue(expected_delta == delta)
