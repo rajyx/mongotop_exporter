@@ -24,8 +24,8 @@ class TestPrometheusFunctions(unittest.TestCase):
 
     def test_extract_db_and_collection_info_returns_correct_db_and_collection(self):
         database = "some_db"
-        raw_collection = 'collection.subcollection","baseparams":{some_super_pam:1}'
-        collection_name_pattern = r'([\w\.]+)'
+        raw_collection = '$collection.subcollection","baseparams":{some_super_pam:1}'
+        collection_name_pattern = r'([^",]+)'
         collection_short_name = re.search(collection_name_pattern, raw_collection).group(1)
         collection_path = '.'.join([database, raw_collection])
         prometheus_info = extract_db_and_collection_info(collection_path)
@@ -38,6 +38,13 @@ class TestPrometheusFunctions(unittest.TestCase):
         self.assertIsNotNone(collection_info)
         self.assertTrue(
             collection_short_name == collection_info.group(1)
+        )
+
+    def test_extract_db_and_collection_info_returns_not_recognized_if_collection_path_regex_not_matches(self):
+        not_recognized_collection_path = ".some_collection"
+        prometheus_info = extract_db_and_collection_info(not_recognized_collection_path)
+        self.assertTrue(
+            '{collection="not_recognized",database="not_recognized"}' == prometheus_info
         )
 
     def test_extract_db_and_collection_info_result_has_braces_and_no_spaces_inside(self):
