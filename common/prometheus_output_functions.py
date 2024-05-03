@@ -15,7 +15,9 @@ def add_prometheus_output_column(dataframe, metric):
 
 
 def extract_db_and_collection_info(collection_path):
-    match = re.search('^(\w+)\.([\w\.]+)', collection_path)
+    match = re.search('^(\w+)\.([^",]+)', collection_path)
+    if match is None:
+        return '{collection="not_recognized",database="not_recognized"}'
     info = ",".join(
         [
             f'collection="{match.group(2)}"',
