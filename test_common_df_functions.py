@@ -51,7 +51,7 @@ class TestCommonDFFunctions(unittest.TestCase):
             (next_metric_value["time"] - prev_metric_value["time"]) /
             (1 if count_delta == 0 else count_delta)
         )
-        self.assertTrue(expected_delta == delta)
+        self.assertTrue(expected_delta == delta, msg=f"{expected_delta} is not equal to {delta}")
 
     def test_get_sorted_limited_df_returns_rows_in_predefined_quantity(self):
         df_len = 50
@@ -63,7 +63,9 @@ class TestCommonDFFunctions(unittest.TestCase):
         self.assertTrue(
             limited_df_len == len(limited_df)
         )
-        min_metric_delta = limited_df.min().loc[f"{metric}_delta"]
+        min_metric_delta = limited_df[
+            [f"{metric}_delta"]
+        ].min().loc[f"{metric}_delta"]
         merged_df = pd.merge(
             df,
             limited_df,
@@ -76,7 +78,9 @@ class TestCommonDFFunctions(unittest.TestCase):
         max_metric_delta_of_non_top_collections = (
             merged_df[
                 merged_df['Exists'] != 'both'
-                ].max().loc[f"{metric}_delta_x"]
+                ][
+                [f"{metric}_delta_x"]
+            ].max().loc[f"{metric}_delta_x"]
         )
         self.assertTrue(
             min_metric_delta >= max_metric_delta_of_non_top_collections
