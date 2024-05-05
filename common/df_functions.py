@@ -35,3 +35,10 @@ def get_top_df(db, metrics):
         top,
         orient="index"
     )[metrics]
+
+
+def get_limited_df(dataframe, sort_by, row_limit):
+    return dataframe.sort_values(
+        by=sort_by,
+        ascending=False
+    ).iloc[:row_limit]
