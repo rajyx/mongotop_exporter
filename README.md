@@ -5,6 +5,7 @@ Simple exporter of average metric times from mongodb top command
 Permissions
 ---------------
 Mongodb user should have the following rights:
+
 ```
   {
      "role":"clusterMonitor",
@@ -15,6 +16,16 @@ Mongodb user should have the following rights:
      "db":"local"
   }
 ```
+
+CLI Arguments
+---------------
+
+- -h, --help, show help message and exit
+- --mongo_host MONGO_HOST, -mh MONGO_HOST mongo db host
+- --mongo_port MONGO_PORT, -mp MONGO_PORT mongo db port
+- --username USERNAME, -u USERNAME mongo user name
+- --password PASSWORD, -p PASSWORD mongo user pwd
+- --limit LIMIT, -l LIMIT limit output collections quantity
 
 Usage examples
 ---------------
@@ -36,7 +47,6 @@ Usage examples
   ```
   docker run -d -p <host_port>:<container_port> --name <container_name> <image>:<tag> -mh <mongo_host> -mp <mongo_port> -u <user> -p <pwd> -l <collections_in_top>
   ```
-
 
 Metrics url
 ---------------
