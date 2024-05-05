@@ -7,10 +7,11 @@ from service import MongoTopPrometheusExporterService
 
 app = Flask(__name__)
 arg_parser = argparse.ArgumentParser()
-arg_parser.add_argument("--mongo_host", "-mh")
-arg_parser.add_argument("--mongo_port", "-mp", default="27017")
-arg_parser.add_argument("--username", "-u")
-arg_parser.add_argument("--password", "-p")
+arg_parser.add_argument("--mongo_host", "-mh", help="mongo db host")
+arg_parser.add_argument("--mongo_port", "-mp", default="27017", help="mongo db port")
+arg_parser.add_argument("--username", "-u", help="mongo user name")
+arg_parser.add_argument("--password", "-p", help="mongo user pwd")
+arg_parser.add_argument("--limit", "-l", default=None, help="limit output collections quantity")
 args = arg_parser.parse_args()
 
 client = MongoClient(
@@ -28,7 +29,16 @@ top_exporter = MongoTopPrometheusExporterService(
 
 @app.route("/metrics")
 def metrics():
-    return Response(top_exporter.get_top_output(), mimetype="text/plain")
+    if args.limit is None:
+        return Response(
+            top_exporter.get_top_output(),
+            mimetype="text/plain"
+        )
+    else:
+        return Response(
+            top_exporter.get_limited_top_output(int(args.limit)),
+            mimetype="text/plain"
+        )
 
 
 if __name__ == '__main__':
