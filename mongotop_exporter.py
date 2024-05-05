@@ -36,7 +36,7 @@ def metrics():
         )
     else:
         return Response(
-            top_exporter.get_limited_top_output(args.limit),
+            top_exporter.get_limited_top_output(int(args.limit)),
             mimetype="text/plain"
         )
 
