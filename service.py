@@ -33,12 +33,33 @@ class MongoTopExporterService(ABC):
         self.__prev_top = prev_top
 
     @abstractmethod
-    def get_top_output(self, limit):
+    def get_top_output(self):
+        pass
+
+    @abstractmethod
+    def get_limited_top_output(self, limit):
         pass
 
 
 class MongoTopPrometheusExporterService(MongoTopExporterService):
-    def get_top_output(self, limit):
+    def get_top_output(self):
+        merged_top = self._prepare_merged_top()
+        add_metrics_delta(merged_top, self.metrics)
+        add_all_metrics_prometheus_output(merged_top, self.metrics)
+        return get_all_metrics_prometheus_output(merged_top, self.metrics)
+
+    def get_limited_top_output(self, limit):
+        merged_top = self._prepare_merged_top()
+        add_metrics_delta(merged_top, self.metrics)
+        merged_top = get_limited_df(
+            dataframe=merged_top,
+            sort_by="total_delta",
+            row_limit=limit
+        )
+        add_all_metrics_prometheus_output(merged_top, self.metrics)
+        return get_all_metrics_prometheus_output(merged_top, self.metrics)
+
+    def _prepare_merged_top(self):
         if self.prev_top is None:
             self.prev_top = get_top_df(
                 self.db,
@@ -56,12 +77,4 @@ class MongoTopPrometheusExporterService(MongoTopExporterService):
             suffixes=["_next", "_previous"]
         )
         self.prev_top = next_top
-        add_metrics_delta(merged_top, self.metrics)
-        if limit is not None:
-            merged_top = get_limited_df(
-                dataframe=merged_top,
-                sort_by="total_delta",
-                row_limit=limit
-            )
-        add_all_metrics_prometheus_output(merged_top, self.metrics)
-        return get_all_metrics_prometheus_output(merged_top, self.metrics)
+        return merged_top

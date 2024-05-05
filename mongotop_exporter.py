@@ -29,12 +29,16 @@ top_exporter = MongoTopPrometheusExporterService(
 
 @app.route("/metrics")
 def metrics():
-    return Response(
-        top_exporter.get_top_output(
-            int(args.limit) if args.limit is not None else args.limit
-        ),
-        mimetype="text/plain"
-    )
+    if args.limit is None:
+        return Response(
+            top_exporter.get_top_output(),
+            mimetype="text/plain"
+        )
+    else:
+        return Response(
+            top_exporter.get_limited_top_output(args.limit),
+            mimetype="text/plain"
+        )
 
 
 if __name__ == '__main__':
