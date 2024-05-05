@@ -31,7 +31,7 @@ top_exporter = MongoTopPrometheusExporterService(
 def metrics():
     return Response(
         top_exporter.get_top_output(
-            int(args.limit)
+            int(args.limit) if args.limit is not None else args.limit
         ),
         mimetype="text/plain"
     )
