@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 from common.df_functions import (
     get_top_df,
-    add_metrics_delta
+    add_metrics_delta,
+    get_limited_df
 )
 from common.prometheus_output_functions import (
     add_all_metrics_prometheus_output,
@@ -32,12 +33,12 @@ class MongoTopExporterService(ABC):
         self.__prev_top = prev_top
 
     @abstractmethod
-    def get_top_output(self):
+    def get_top_output(self, limit):
         pass
 
 
 class MongoTopPrometheusExporterService(MongoTopExporterService):
-    def get_top_output(self):
+    def get_top_output(self, limit):
         if self.prev_top is None:
             self.prev_top = get_top_df(
                 self.db,
@@ -56,5 +57,11 @@ class MongoTopPrometheusExporterService(MongoTopExporterService):
         )
         self.prev_top = next_top
         add_metrics_delta(merged_top, self.metrics)
+        if limit is not None:
+            merged_top = get_limited_df(
+                dataframe=merged_top,
+                sort_by="total_delta",
+                row_limit=limit
+            )
         add_all_metrics_prometheus_output(merged_top, self.metrics)
         return get_all_metrics_prometheus_output(merged_top, self.metrics)
